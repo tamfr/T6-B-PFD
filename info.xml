@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<pluginstrument>
+    <aircraft>T-6B</aircraft>
+    <author>Mott</author>
+    <compatibleFSX>false</compatibleFSX>
+    <compatibleP3D>false</compatibleP3D>
+    <compatibleXPL>true</compatibleXPL>
+    <configVersion>1</configVersion>
+    <description></description>
+    <pluginInterfaceVersion>100</pluginInterfaceVersion>
+    <prefHeight>784</prefHeight>
+    <prefWidth>560</prefWidth>
+    <type>PFD</type>
+    <uuid>a62dbefa-631e-44ff-8354-b9d27c1e19ed</uuid>
+    <version>1</version>
+</pluginstrument>
