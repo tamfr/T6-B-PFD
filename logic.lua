@@ -444,10 +444,10 @@ fsx_variable_subscribe("AIRSPEED INDICATED", "Knots", new_speed)
 
 xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/airspeed_acceleration_kts_sec_pilot", "FLOAT", new_airspeed_acceleration)
 
-xpl_dataref_subscribe("sim/flightmodel/position/true_airspeed", "FLOAT", new_airspeed)
+xpl_dataref_subscribe("sim/flightmodel/position/true_airspeed", "FLOAT", new_airspeed) -- m/s
 fsx_variable_subscribe("AIRSPEED TRUE", "Knots", new_airspeed)
 
-xpl_dataref_subscribe("sim/flightmodel/position/groundspeed", "FLOAT", new_groundspeed)
+xpl_dataref_subscribe("sim/flightmodel/position/groundspeed", "FLOAT", new_groundspeed) -- m/s
 fsx_variable_subscribe("GPS GROUND SPEED", "Knots", new_groundspeed)
 
 xpl_dataref_subscribe("sim/weather/temperature_ambient_c", "FLOAT", new_temperature)
