@@ -110,10 +110,10 @@ img_viewport_rect(beam_right_bottom_id, 724,211, 14, 30)
 
 compass_id = img_add("compass.png", 146,450,268,268)
 
-ils_frame_id = img_add("ILSframe.png", 175,420,210,179)
+ils_frame_id = img_add("compassframe.png", 135,421,291,309)
 
-compass_bug_id = img_add("compassbug.png", 144,446,272,272)
-
+compass_bug_id = img_add("compassbug.png", 139,444,282,282)
+bearing_pointer_one_id = img_add("bearing_pointer_one.png", 146,450,268,268)
 
 function item_value_callback_compass(i)
 
