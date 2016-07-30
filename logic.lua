@@ -35,8 +35,8 @@ running_img_right_id  = running_img_add_ver("linesright.png",443,40,5,18,85)
 running_txt_viewport_rect(running_text_right_id,455,26,100,320)
 running_img_viewport_rect(running_img_right_id ,443,26,100,320)
 
-bow_id = img_add("bow.png",155,290,250,nil)
-roll_pointer_id = img_add("pointer.png",155,110,250,250)
+bow_id = img_add("roll_scale.png",155,92,250,250)
+roll_pointer_id = img_add("pointer.png",155,92,250,250)
 balance_id = img_add("balance.png",268,370,24,7)
 
 
