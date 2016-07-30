@@ -184,13 +184,13 @@ function new_roll_pitch(roll, pitch)
     
     radial = math.rad(roll * -1)
     
-    x = (math.sin(radial) * pitch * 6.45) + 420
-    y = (math.cos(radial) * pitch * 6.45) - 490
+    x = (math.sin(radial) * pitch * 4.6) + 420
+    y = (math.cos(radial) * pitch * 4.6) - 490
 
     img_move(slide_id,-x,y,nil,nil)
     
-    x = (math.sin(radial) * pitch * 6.45) - 205
-    y = (math.cos(radial) * pitch * 6.45) + 38
+    x = (math.sin(radial) * pitch * 4.6) - 205
+    y = (math.cos(radial) * pitch * 4.6) + 38
     
     img_move(pitch_id,-x,y,nil,nil)
 
