@@ -348,9 +348,10 @@ function new_slip_deg(slip)
 
 end
 
-function new_rotation(rotation)
+function new_rotation(rotation, bearing_one)
     running_txt_move_carot(compass_inner_txt_id, (rotation / 30) + 6)
     img_rotate(compass_id,rotation * -1)
+    img_rotate(bearing_pointer_one_id,bearing_one+360-rotation)
     txt_set(compass_txt_id, string.format("%03d",var_round(rotation,0)))
 end
 
@@ -413,7 +414,6 @@ end
 --------------------------------------
 xpl_dataref_subscribe("sim/cockpit2/radios/actuators/nav1_frequency_hz","FLOAT",
 					  "sim/cockpit/radios/nav1_dme_dist_m", "FLOAT",
-					  "sim/cockpit2/radios/indicators/nav1_bearing_deg_mag","FLOAT",
 new_bearing1)
 
 xpl_dataref_subscribe("sim/flightmodel2/misc/AoA_angle_degrees","FLOAT", new_aoa)
@@ -456,7 +456,8 @@ fsx_variable_subscribe("AMBIENT TEMPERATURE", "Celsius", new_temperature)
 
 xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/slip_deg", "FLOAT", new_slip_deg)
 
-xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot", "FLOAT", new_rotation)
+xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot", "FLOAT", 
+						"sim/cockpit2/radios/indicators/nav1_bearing_deg_mag","FLOAT", new_rotation)
 fsx_variable_subscribe("PLANE HEADING DEGREES GYRO", "Degrees", new_rotation)
 
 xpl_dataref_subscribe("sim/weather/wind_direction_degt", "FLOAT",
