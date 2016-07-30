@@ -363,10 +363,10 @@ end
 
 -- Compass and Bearing Pointer 1
 
-function new_rotation(rotation, bearing_one, bearing_one_relative)
+function new_rotation(rotation, bearing_one_relative)
     running_txt_move_carot(compass_inner_txt_id, (rotation / 30) + 6)
     img_rotate(compass_id,rotation * -1)
-    img_rotate(bearing_pointer_one_id,bearing_one+360-rotation)
+    img_rotate(bearing_pointer_one_id,bearing_one_relative)
     txt_set(compass_txt_id, string.format("%03d",var_round(rotation,0)))
 end
 
@@ -401,14 +401,13 @@ end
 
 wind_speed_txt = txt_add("???", "-fx-font-size:16px; -fx-font-family:ariel; -fx-fill:white; -fx-text-alignment:center", 150, 444, 80,20)
 
-function new_wind_settings(wind_speed)
-    txt_set(wind_speed_txt, string.format("%d", wind_speed))
-end
+
 
 wind_arrow_id = img_add("windarrow.png", 150, 450, 20, 10)
 
-function new_wind_direction(direction, heading)
-    relative_wind_direction = direction - heading
+function new_winds(wind_direction, wind_speed, heading)
+    txt_set(wind_speed_txt, string.format("%d", wind_speed))
+    relative_wind_direction = wind_direction - heading
     img_rotate(wind_arrow_id,relative_wind_direction -90)
 end
 
@@ -459,35 +458,48 @@ xpl_dataref_subscribe("sim/weather/temperature_ambient_c", "FLOAT", new_temperat
 
 xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/slip_deg", "FLOAT", new_slip_deg)
 
-xpl_dataref_subscribe("sim/weather/wind_direction_degt", "FLOAT",
-					  "sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot", "FLOAT", new_wind_direction)
---fsx_variable_subscribe("AMBIENT WIND DIRECTION", "Degrees", new_wind_direction)
-
 ------------------------------------------------------------------------------------------
 -- HSI
 
-xpl_dataref_subscribe("sim/cockpit2/radios/actuators/nav1_frequency_Mhz", "INT",
-					  "sim/cockpit2/radios/actuators/nav1_frequency_khz", "INT",
-					  "sim/cockpit/radios/nav1_dme_dist_m", "FLOAT",
-new_bearing_one)
+xpl_dataref_subscribe(
+		"sim/cockpit2/radios/actuators/nav1_frequency_Mhz", "INT", -- [MHz]
+		"sim/cockpit2/radios/actuators/nav1_frequency_khz", "INT", -- [kHz]
+		"sim/cockpit/radios/nav1_dme_dist_m", "FLOAT",
+	new_bearing_one)
 
-xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot", "FLOAT", 
-						"sim/cockpit2/radios/indicators/nav1_bearing_deg_mag","FLOAT", 
-					   "sim/cockpit2/radios/indicators/nav1_relative_bearing_deg","FLOAT", new_rotation)
+xpl_dataref_subscribe(
+		"sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot", "FLOAT",  -- [deg]
+		"sim/cockpit2/radios/indicators/nav1_relative_bearing_deg","FLOAT", -- [deg]
+	new_rotation)
+
 --fsx_variable_subscribe("PLANE HEADING DEGREES GYRO", "Degrees", new_rotation)
 
-xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot", "FLOAT",
-					  "sim/cockpit/autopilot/heading_mag", "FLOAT", new_rotation_bug)
+xpl_dataref_subscribe(
+		"sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot", "FLOAT",
+		"sim/cockpit/autopilot/heading_mag", "FLOAT", 
+	new_rotation_bug)
+
 --fsx_variable_subscribe("PLANE HEADING DEGREES GYRO", "Degrees", "AUTOPILOT HEADING LOCK DIR", "Degrees", new_rotation_bug)
 			  
 xpl_dataref_subscribe(
-              "sim/weather/wind_speed_kt", "FLOAT", new_wind_settings)
+		"sim/weather/wind_direction_degt", "FLOAT", -- [deg true]
+		"sim/weather/wind_speed_kt", "FLOAT", -- [kts]
+		"sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot", "FLOAT", -- [deg]	
+	new_winds)
+
+--fsx_variable_subscribe("AMBIENT WIND DIRECTION", "Degrees", new_wind_direction)
 --fsx_variable_subscribe("AMBIENT WIND VELOCITY", "Knots", new_wind_settings)		
 
-xpl_dataref_subscribe("sim/flightmodel/position/true_airspeed", "FLOAT", new_airspeed) -- m/s
+xpl_dataref_subscribe(
+		"sim/flightmodel/position/true_airspeed", "FLOAT", -- [m/s]
+	new_airspeed)
+
 --fsx_variable_subscribe("AIRSPEED TRUE", "Knots", new_airspeed)
 
-xpl_dataref_subscribe("sim/flightmodel/position/groundspeed", "FLOAT", new_groundspeed) -- m/s
+xpl_dataref_subscribe(
+		"sim/flightmodel/position/groundspeed", "FLOAT", -- [m/s]
+	new_groundspeed)
+
 --fsx_variable_subscribe("GPS GROUND SPEED", "Knots", new_groundspeed)	  
 
 
