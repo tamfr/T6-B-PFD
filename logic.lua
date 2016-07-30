@@ -152,8 +152,8 @@ bearing1_dist_txt_id = txt_add("??.?", "-fx-font-size:16px; -fx-font-family:arie
 nav_txt_id = txt_add("???.??", "-fx-font-size:17px; -fx-font-family:ariel; -fx-fill:white; -fx-font-weight:bold; -fx-text-alignment:center", 20, 520, 60,40)
 --aux_txt_id = txt_add("NAV-1", "-fx-font-size:17px; -fx-font-family:ariel; -fx-fill:#3c99de; -fx-font-weight:bold; -fx-text-alignment:center", 34, 580, 60,40)
 
-function new_bearing1(frequency, dme)
-	txt_set(bearing1_freq_txt_id,string.format("%03d.%02d", math.floor(frequency/100), (frequency/100 % 1) * 100 ))
+function new_bearing_one(frequency_MHz, frequency_kHz, dme)
+	txt_set(bearing1_freq_txt_id,string.format("%03d.%.02d",frequency_MHz, frequency_kHz))
 	txt_set(bearing1_dist_txt_id, string.format("%d.%01d",math.floor(dme), (dme % 1) * 100 ))
 end
 
@@ -196,8 +196,6 @@ function new_roll_pitch(roll, pitch)
     --img_move(roll_pointer_id,x + 268,y + 420,nil,nil)
     
 end
-
-
 
 ------------------------------------------------------------------------------
 -- ASI
@@ -340,6 +338,16 @@ function new_vsi_bug(vspeed)
 
 end
 
+-- AOA
+
+aoa_txt = txt_add("???", "-fx-font-size:16px; -fx-font-family:ariel; -fx-fill:white; -fx-text-alignment:right", 10, 356, 40,20)
+
+function new_aoa(aoa)
+	txt_set(aoa_txt, string.format("%d.%01d",math.floor(aoa), (aoa % 1) * 100 ))
+end
+
+-- Slip
+
 function new_slip_deg(slip)
 
     slip = var_cap(slip, -8.1, 8.1)
@@ -347,15 +355,21 @@ function new_slip_deg(slip)
     img_move(balance_id, (slip * -4) + 268, nil, nil, nil)
 
 end
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+-- HSI
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 
-function new_rotation(rotation, bearing_one)
+-- Compass and Bearing Pointer 1
+
+function new_rotation(rotation, bearing_one, bearing_one_relative)
     running_txt_move_carot(compass_inner_txt_id, (rotation / 30) + 6)
     img_rotate(compass_id,rotation * -1)
     img_rotate(bearing_pointer_one_id,bearing_one+360-rotation)
     txt_set(compass_txt_id, string.format("%03d",var_round(rotation,0)))
 end
 
-------------------------------------------------------------------------------
 -- Heading Bug
 
 hdg_bug_txt_id = txt_add("???", "-fx-font-size:17px; -fx-font-family:ariel; -fx-fill:#e72ccd; -fx-font-weight:bold; -fx-text-alignment:center", 450, 700, 40,40)
@@ -370,7 +384,6 @@ function new_rotation_bug(rotation, rotation_bug)
     
 end
 
-------------------------------------------------------------------------------
 -- TAS and Ground Speed
 
 tas_text_id = txt_add("??? KTS", "-fx-font-size:16px; -fx-font-family:ariel; -fx-fill:white; -fx-font-weight:bold; -fx-text-alignment:center", 150,420, 80, 20)
@@ -384,7 +397,6 @@ function new_groundspeed(speedground)
 	txt_set(gs_text_id, string.format("GS: %d KTS", var_round(speedground * 1.94384449, 0) ))
 end
 
-------------------------------------------------------------------------------
 -- Wind Direction and Speed
 
 wind_speed_txt = txt_add("???", "-fx-font-size:16px; -fx-font-family:ariel; -fx-fill:white; -fx-text-alignment:center", 150, 444, 80,20)
@@ -400,21 +412,18 @@ function new_wind_direction(direction, heading)
     img_rotate(wind_arrow_id,relative_wind_direction -90)
 end
 
-------------------------------------------------------------------------------
--- AOA
 
-aoa_txt = txt_add("???", "-fx-font-size:16px; -fx-font-family:ariel; -fx-fill:white; -fx-text-alignment:right", 10, 356, 40,20)
-
-function new_aoa(aoa)
-	txt_set(aoa_txt, string.format("%d.%01d",math.floor(aoa), (aoa % 1) * 100 ))
-end
 
 --------------------------------------
 -- X plane subscriptions (datarefs) --
 --------------------------------------
-xpl_dataref_subscribe("sim/cockpit2/radios/actuators/nav1_frequency_hz","FLOAT",
-					  "sim/cockpit/radios/nav1_dme_dist_m", "FLOAT",
-new_bearing1)
+xpl_dataref_subscribe("sim/cockpit/gyros/phi_ind_deg3", "FLOAT",
+              "sim/cockpit/gyros/the_ind_deg3", "FLOAT", new_roll_pitch)
+--fsx_variable_subscribe("PLANE BANK DEGREES", "Degrees", "PLANE PITCH DEGREES", "Degrees", new_roll_pitch_fsx)
+
+xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/altitude_ft_pilot", "FLOAT",
+              "sim/cockpit/autopilot/altitude", "FLOAT", new_feet_bug)
+--fsx_variable_subscribe("INDICATED ALTITUDE", "Feet", "AUTOPILOT ALTITUDE LOCK VAR", "Feet", new_feet_bug)
 
 xpl_dataref_subscribe("sim/flightmodel2/misc/AoA_angle_degrees","FLOAT", new_aoa)
 
@@ -441,48 +450,46 @@ xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/radio_altimeter_height_ft_
 --fsx_variable_subscribe("INDICATED ALTITUDE", "Feet", new_altitude)
 
 xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/airspeed_kts_pilot", "FLOAT", new_speed)
-fsx_variable_subscribe("AIRSPEED INDICATED", "Knots", new_speed)
+--fsx_variable_subscribe("AIRSPEED INDICATED", "Knots", new_speed)
 
 xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/airspeed_acceleration_kts_sec_pilot", "FLOAT", new_airspeed_acceleration)
 
-xpl_dataref_subscribe("sim/flightmodel/position/true_airspeed", "FLOAT", new_airspeed) -- m/s
-fsx_variable_subscribe("AIRSPEED TRUE", "Knots", new_airspeed)
-
-xpl_dataref_subscribe("sim/flightmodel/position/groundspeed", "FLOAT", new_groundspeed) -- m/s
-fsx_variable_subscribe("GPS GROUND SPEED", "Knots", new_groundspeed)
-
 xpl_dataref_subscribe("sim/weather/temperature_ambient_c", "FLOAT", new_temperature)
-fsx_variable_subscribe("AMBIENT TEMPERATURE", "Celsius", new_temperature)
+--fsx_variable_subscribe("AMBIENT TEMPERATURE", "Celsius", new_temperature)
 
 xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/slip_deg", "FLOAT", new_slip_deg)
-
-xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot", "FLOAT", 
-						"sim/cockpit2/radios/indicators/nav1_bearing_deg_mag","FLOAT", new_rotation)
-fsx_variable_subscribe("PLANE HEADING DEGREES GYRO", "Degrees", new_rotation)
 
 xpl_dataref_subscribe("sim/weather/wind_direction_degt", "FLOAT",
 					  "sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot", "FLOAT", new_wind_direction)
 --fsx_variable_subscribe("AMBIENT WIND DIRECTION", "Degrees", new_wind_direction)
 
+------------------------------------------------------------------------------------------
+-- HSI
+
+xpl_dataref_subscribe("sim/cockpit2/radios/actuators/nav1_frequency_Mhz", "INT",
+					  "sim/cockpit2/radios/actuators/nav1_frequency_khz", "INT",
+					  "sim/cockpit/radios/nav1_dme_dist_m", "FLOAT",
+new_bearing_one)
+
+xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot", "FLOAT", 
+						"sim/cockpit2/radios/indicators/nav1_bearing_deg_mag","FLOAT", 
+					   "sim/cockpit2/radios/indicators/nav1_relative_bearing_deg","FLOAT", new_rotation)
+--fsx_variable_subscribe("PLANE HEADING DEGREES GYRO", "Degrees", new_rotation)
+
 xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot", "FLOAT",
 					  "sim/cockpit/autopilot/heading_mag", "FLOAT", new_rotation_bug)
-fsx_variable_subscribe("PLANE HEADING DEGREES GYRO", "Degrees", 
-					   "AUTOPILOT HEADING LOCK DIR", "Degrees", new_rotation_bug)
-			  
-xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/altitude_ft_pilot", "FLOAT",
-              "sim/cockpit/autopilot/altitude", "FLOAT", new_feet_bug)
-fsx_variable_subscribe("INDICATED ALTITUDE", "Feet", 
-					   "AUTOPILOT ALTITUDE LOCK VAR", "Feet", new_feet_bug)
+--fsx_variable_subscribe("PLANE HEADING DEGREES GYRO", "Degrees", "AUTOPILOT HEADING LOCK DIR", "Degrees", new_rotation_bug)
 			  
 xpl_dataref_subscribe(
               "sim/weather/wind_speed_kt", "FLOAT", new_wind_settings)
-fsx_variable_subscribe( 
-					   "AMBIENT WIND VELOCITY", "Knots", new_wind_settings)			  
-			  
-xpl_dataref_subscribe("sim/cockpit/gyros/phi_ind_deg3", "FLOAT",
-              "sim/cockpit/gyros/the_ind_deg3", "FLOAT", new_roll_pitch)
-fsx_variable_subscribe("PLANE BANK DEGREES", "Degrees", 
-					   "PLANE PITCH DEGREES", "Degrees", new_roll_pitch_fsx)
+--fsx_variable_subscribe("AMBIENT WIND VELOCITY", "Knots", new_wind_settings)		
+
+xpl_dataref_subscribe("sim/flightmodel/position/true_airspeed", "FLOAT", new_airspeed) -- m/s
+--fsx_variable_subscribe("AIRSPEED TRUE", "Knots", new_airspeed)
+
+xpl_dataref_subscribe("sim/flightmodel/position/groundspeed", "FLOAT", new_groundspeed) -- m/s
+--fsx_variable_subscribe("GPS GROUND SPEED", "Knots", new_groundspeed)	  
+
 
 ---------------
 -- TEST CODE --
