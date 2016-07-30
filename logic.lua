@@ -11,8 +11,8 @@
 -----------------------------------------
 
 slide_id = img_add("slide.png", -420, -490, 1400, 1400)
-pitch_id = img_add("verticaldegrees.png", 205, 38, 150, 343)
-running_txt_viewport_rect(pitch_id,140,38,280,300)
+pitch_id = img_add("verticaldegrees.png", 205, 46, 150, 325)
+running_txt_viewport_rect(pitch_id,140,38,280,280)
 --img_viewport_rect(pitch_id, 412, 60, 180, 280)
 
 function item_value_callback_left(i)
@@ -35,9 +35,9 @@ running_img_right_id  = running_img_add_ver("linesright.png",443,40,5,18,85)
 running_txt_viewport_rect(running_text_right_id,455,26,100,320)
 running_img_viewport_rect(running_img_right_id ,443,26,100,320)
 
-bow_id = img_add("roll_scale.png",155,92,250,250)
-roll_pointer_id = img_add("pointer.png",155,92,250,250)
-balance_id = img_add("balance.png",268,370,24,7)
+roll_scale_id = img_add("roll_scale.png", 130, 67, 300, 300)
+roll_pointer_id = img_add("pointer.png", 130, 67, 300, 300)
+balance_id = img_add("balance.png",268,364,24,7)
 
 
 ft_indicator_bug_id = img_add("heightbug.png",710,178,12,32)
@@ -190,7 +190,7 @@ function new_roll_pitch(roll, pitch)
     img_move(slide_id,-x,y,nil,nil)
     
     x = (math.sin(radial) * pitch * 4.6) - 205
-    y = (math.cos(radial) * pitch * 4.6) + 38
+    y = (math.cos(radial) * pitch * 4.6) + 46
     
     img_move(pitch_id,-x,y,nil,nil)
 
