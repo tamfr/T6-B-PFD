@@ -374,9 +374,10 @@ end
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
--- Compass and Bearing Pointer 1
 
-function new_rotation(rotation, bearing_one_relative, obs, to_from)
+hdg_bug_txt_id = txt_add("???", "-fx-font-size:17px; -fx-font-family:ariel; -fx-fill:#e72ccd; -fx-font-weight:bold; -fx-text-alignment:center", 450, 700, 40,40)
+
+function new_rotation(rotation, rotation_bug, bearing_one_relative, obs, to_from)
     running_txt_move_carot(compass_inner_txt_id, (rotation / 30) + 6)
     img_rotate(compass_id,rotation * -1)
     img_rotate(bearing_pointer_one_id,bearing_one_relative)
@@ -391,21 +392,19 @@ function new_rotation(rotation, bearing_one_relative, obs, to_from)
     end
     	
     txt_set(compass_txt_id, string.format("%03d",var_round(rotation,0)))
-end
-
--- Heading Bug
-
-hdg_bug_txt_id = txt_add("???", "-fx-font-size:17px; -fx-font-family:ariel; -fx-fill:#e72ccd; -fx-font-weight:bold; -fx-text-alignment:center", 450, 700, 40,40)
-
-function new_rotation_bug(rotation, rotation_bug)
-
-    txt_set(hdg_bug_txt_id, string.format("%03d",rotation_bug))
+   
+    -- Heading Bug
+	 txt_set(hdg_bug_txt_id, string.format("%03d",rotation_bug))
     
     calc_rotation = 180 + rotation_bug - rotation
     
     img_rotate(compass_bug_id, calc_rotation + 90)
-    
 end
+
+
+
+
+
 
 -- TAS and Ground Speed
 
@@ -437,15 +436,23 @@ end
 --------------------------------------
 -- X plane subscriptions (datarefs) --
 --------------------------------------
-xpl_dataref_subscribe("sim/cockpit/gyros/phi_ind_deg3", "FLOAT",
-              "sim/cockpit/gyros/the_ind_deg3", "FLOAT", new_roll_pitch)
+xpl_dataref_subscribe(
+		"sim/cockpit/gyros/phi_ind_deg3", "FLOAT",
+      "sim/cockpit/gyros/the_ind_deg3", "FLOAT",
+   new_roll_pitch)
+   
 --fsx_variable_subscribe("PLANE BANK DEGREES", "Degrees", "PLANE PITCH DEGREES", "Degrees", new_roll_pitch_fsx)
 
-xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/altitude_ft_pilot", "FLOAT",
-              "sim/cockpit/autopilot/altitude", "FLOAT", new_feet_bug)
+xpl_dataref_subscribe(
+		"sim/cockpit2/gauges/indicators/altitude_ft_pilot", "FLOAT",
+		"sim/cockpit/autopilot/altitude", "FLOAT", 
+	new_feet_bug)
+	
 --fsx_variable_subscribe("INDICATED ALTITUDE", "Feet", "AUTOPILOT ALTITUDE LOCK VAR", "Feet", new_feet_bug)
 
-xpl_dataref_subscribe("sim/flightmodel2/misc/AoA_angle_degrees","FLOAT", new_aoa)
+xpl_dataref_subscribe(
+		"sim/flightmodel2/misc/AoA_angle_degrees","FLOAT",
+	new_aoa)
 
 xpl_dataref_subscribe(
 		"sim/cockpit/misc/barometer_setting", "FLOAT", 
@@ -453,11 +460,15 @@ xpl_dataref_subscribe(
 	
 --fsx_variable_subscribe("Kohlsman setting hg", "inHg", new_pressure)
 
-xpl_dataref_subscribe("sim/cockpit/autopilot/altitude", "FLOAT", new_min_ft_bug)
+xpl_dataref_subscribe(
+		"sim/cockpit/autopilot/altitude", "FLOAT", 
+	new_min_ft_bug)
+	
 --fsx_variable_subscribe("AUTOPILOT ALTITUDE LOCK VAR", "Feet", new_min_ft_bug)
 
-xpl_dataref_subscribe("sim/cockpit/radios/nav1_hdef_dot", "FLOAT", new_ils_hor_ft) -- Goede dataref vinden!
-
+xpl_dataref_subscribe(
+		"sim/cockpit/radios/nav1_hdef_dot", "FLOAT", 
+	new_ils_hor_ft) -- Goede dataref vinden!
 
 xpl_dataref_subscribe(
 		"sim/cockpit2/gauges/indicators/vvi_fpm_pilot", "FLOAT", -- [ft/min]
@@ -505,18 +516,13 @@ xpl_dataref_subscribe(
 
 xpl_dataref_subscribe(
 		"sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot", "FLOAT",  -- [deg]
+		"sim/cockpit/autopilot/heading_mag", "FLOAT", -- [deg]
 		"sim/cockpit2/radios/indicators/nav1_relative_bearing_deg","FLOAT", -- [deg]
 		"sim/cockpit2/radios/actuators/hsi_obs_deg_mag_pilot", "FLOAT", --- [deg]
 		"sim/cockpit2/radios/indicators/nav1_flag_from_to_pilot", "INT", -- 0, 1:to, 2:from 
 	new_rotation)
 
 --fsx_variable_subscribe("PLANE HEADING DEGREES GYRO", "Degrees", new_rotation)
-
-xpl_dataref_subscribe(
-		"sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot", "FLOAT",
-		"sim/cockpit/autopilot/heading_mag", "FLOAT", 
-	new_rotation_bug)
-
 --fsx_variable_subscribe("PLANE HEADING DEGREES GYRO", "Degrees", "AUTOPILOT HEADING LOCK DIR", "Degrees", new_rotation_bug)
 			  
 xpl_dataref_subscribe(
