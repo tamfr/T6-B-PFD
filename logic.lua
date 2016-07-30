@@ -413,6 +413,7 @@ end
 --------------------------------------
 xpl_dataref_subscribe("sim/cockpit2/radios/actuators/nav1_frequency_hz","FLOAT",
 					  "sim/cockpit/radios/nav1_dme_dist_m", "FLOAT",
+					  "sim/cockpit2/radios/indicators/nav1_bearing_deg_mag","FLOAT",
 new_bearing1)
 
 xpl_dataref_subscribe("sim/flightmodel2/misc/AoA_angle_degrees","FLOAT", new_aoa)
