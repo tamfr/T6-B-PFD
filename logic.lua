@@ -49,7 +49,7 @@ img_add_fullscreen("foreground.png")
 ft_indicator_text_id = txt_add("???? FT", "-fx-font-size:22px; -fx-font-family:ariel; -fx-font-weight:bold; -fx-fill:purple; -fx-text-alignment:center", 704,2, 101, 30)
 
 
-oat_text_id = txt_add("??\° C",   "-fx-font-size:16px; -fx-font-family:ariel; -fx-fill:white; -fx-font-weight:bold; -fx-text-alignment:center", 78,326, 80, 20)
+-- oat_text_id = txt_add("??\° C",   "-fx-font-size:16px; -fx-font-family:ariel; -fx-fill:white; -fx-font-weight:bold; -fx-text-alignment:center", 78,326, 80, 20)
 
 
 function item_value_callback_inner_left_minor(i)
@@ -159,16 +159,19 @@ end
 
 alt_bug_txt_id = txt_add("?????", "-fx-font-size:15px; -fx-font-family:ariel; -fx-fill:#e72ccd; -fx-font-weight:bold; -fx-text-alignment:center", 440, 345, 60,40)
 
+vsi_txt_id = txt_add("?????", "-fx-font-size:15px; -fx-font-family:ariel; -fx-fill:white; -fx-font-weight:bold; -fx-text-alignment:right", 495, 345, 60,40)
+
+
 baro_set_txt_id = txt_add("??.??", "-fx-font-size:17px; -fx-font-family:ariel; -fx-fill:white; -fx-font-weight:bold; -fx-text-alignment:center", 446, 388, 80,40)
 
 -------------------------------------------------------
 -- functions which handle data received from X-plane --
 -------------------------------------------------------
-function new_roll_pitch_fsx(roll, pitch)
-
-	new_roll_pitch(roll * -1, pitch * -1)
-
-end
+--function new_roll_pitch_fsx(roll, pitch)
+--
+--	new_roll_pitch(roll * -1, pitch * -1)
+--
+--end
 
 function new_roll_pitch(roll, pitch)
 
@@ -237,7 +240,8 @@ end
 -- VSI
 
 function new_vsi(vspeed)
-
+		
+	txt_set(vsi_txt_id, string.format("%d",var_round(vspeed,0)))
     vspeed = var_round(vspeed,0)
 	vspeedtext = vspeed
     vspeedtext = vspeedtext - (vspeedtext%100)
