@@ -114,6 +114,8 @@ ils_frame_id = img_add("compassframe.png", 135,421,291,309)
 
 compass_bug_id = img_add("compassbug.png", 139,444,282,282)
 bearing_pointer_one_id = img_add("bearing_pointer_one.png", 146,450,268,268)
+cdi_id = img_add("cdi_needle.png", 146,450,268,268)
+cdi_from_arrow_id = img_add("cdi_from_arrow.png", 146,450,268,268)
 
 function item_value_callback_compass(i)
 
@@ -374,10 +376,20 @@ end
 
 -- Compass and Bearing Pointer 1
 
-function new_rotation(rotation, bearing_one_relative)
+function new_rotation(rotation, bearing_one_relative, obs, to_from)
     running_txt_move_carot(compass_inner_txt_id, (rotation / 30) + 6)
     img_rotate(compass_id,rotation * -1)
     img_rotate(bearing_pointer_one_id,bearing_one_relative)
+    img_rotate(cdi_id, obs - rotation)
+    
+    if to_from > 1 then
+    	img_rotate(cdi_from_arrow_id, obs - rotation)
+    elseif to_from > 0 then 
+    	img_rotate(cdi_from_arrow_id, obs - rotation + 180)
+    else
+    	visible(cdi_from_arrow_id, false)
+    end
+    	
     txt_set(compass_txt_id, string.format("%03d",var_round(rotation,0)))
 end
 
@@ -494,6 +506,8 @@ xpl_dataref_subscribe(
 xpl_dataref_subscribe(
 		"sim/cockpit2/gauges/indicators/heading_electric_deg_mag_pilot", "FLOAT",  -- [deg]
 		"sim/cockpit2/radios/indicators/nav1_relative_bearing_deg","FLOAT", -- [deg]
+		"sim/cockpit2/radios/actuators/hsi_obs_deg_mag_pilot", "FLOAT", --- [deg]
+		"sim/cockpit2/radios/indicators/nav1_flag_from_to_pilot", "INT", -- 0, 1:to, 2:from 
 	new_rotation)
 
 --fsx_variable_subscribe("PLANE HEADING DEGREES GYRO", "Degrees", new_rotation)
