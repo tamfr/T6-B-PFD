@@ -273,9 +273,13 @@ function new_vsi(vspeed)
 	img_move(vspeed_needle_id,x,y,nil,nil)
 end
 
-function new_pressure(pressure)
+-- Altimeter setting
+
+function new_altimeter_setting(pressure)
     txt_set(baro_set_txt_id, string.format("%02d.%02d IN", math.floor(pressure), (pressure % 1) * 100 ) )
 end
+
+-- Temp
 
 -- function new_temperature(temperature)
 -- 	txt_set(oat_text_id, string.format("%d\° C", temperature))
@@ -315,30 +319,30 @@ function new_altitude_acceleration(acceleration)
 	img_move(beam_right_bottom_id, nil, 211 - (31-math.abs(acceleration)), nil, nil)
 end
 
-function new_vsi_bug(vspeed)
-
-    txt_set(vsi_bug_txt_id,string.format("%04d", vspeed))
-
-    vspeed = var_cap(vspeed/100,-20,20)
-
-    if vspeed > 10 then
-      rotation = 13.83 + ( (vspeed-10) * (6.16 / 10) )
-    elseif vspeed < -10 then
-      rotation = -13.83 + ( (vspeed+10) * (6.16 / 10) )
-    else
-      rotation = vspeed * (13.83 / 10)
-    end
-
-	radial = math.rad(rotation * -1.185)
-
-	img_rotate(vspeed_bug_id, rotation * 2.1)
-
-	x = 1575 - (720 * math.cos(radial))
-	y = 178 + (380 * math.sin(radial))
-
-	img_move(vspeed_bug_id,x,y,nil,nil)
-
-end
+--function new_vsi_bug(vspeed)
+--
+--    txt_set(vsi_bug_txt_id,string.format("%04d", vspeed))
+--
+--    vspeed = var_cap(vspeed/100,-20,20)
+--
+--    if vspeed > 10 then
+--      rotation = 13.83 + ( (vspeed-10) * (6.16 / 10) )
+--    elseif vspeed < -10 then
+--      rotation = -13.83 + ( (vspeed+10) * (6.16 / 10) )
+--    else
+--      rotation = vspeed * (13.83 / 10)
+--    end
+--
+--	radial = math.rad(rotation * -1.185)
+--
+--	img_rotate(vspeed_bug_id, rotation * 2.1)
+--
+--	x = 1575 - (720 * math.cos(radial))
+--	y = 178 + (380 * math.sin(radial))
+--
+--	img_move(vspeed_bug_id,x,y,nil,nil)
+--
+--end
 
 -- AOA
 
@@ -427,7 +431,10 @@ xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/altitude_ft_pilot", "FLOAT
 
 xpl_dataref_subscribe("sim/flightmodel2/misc/AoA_angle_degrees","FLOAT", new_aoa)
 
-xpl_dataref_subscribe("sim/cockpit/misc/barometer_setting", "FLOAT", new_pressure)
+xpl_dataref_subscribe(
+		"sim/cockpit/misc/barometer_setting", "FLOAT", 
+	new_altimeter_setting)
+	
 --fsx_variable_subscribe("Kohlsman setting hg", "inHg", new_pressure)
 
 xpl_dataref_subscribe("sim/cockpit/autopilot/altitude", "FLOAT", new_min_ft_bug)
@@ -442,25 +449,34 @@ xpl_dataref_subscribe(
 	
 --fsx_variable_subscribe("VERTICAL SPEED", "Feet per minute", new_vsi)
 
-xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/radio_altimeter_height_ft_pilot", "FLOAT",
-					  "sim/cockpit/misc/radio_altimeter_minimum", "FLOAT",
-					  "sim/flightmodel/misc/h_ind", "FLOAT", 
-					  "sim/cockpit2/gauges/indicators/airspeed_kts_pilot", "FLOAT",
-					  "sim/aircraft/view/acf_Vne", "FLOAT",
-					  "sim/aircraft/view/acf_Vno", "FLOAT", 
-					  "sim/cockpit/autopilot/altitude", "FLOAT", new_altitude)
+xpl_dataref_subscribe(
+		"sim/cockpit2/gauges/indicators/radio_altimeter_height_ft_pilot", "FLOAT",
+		"sim/cockpit/misc/radio_altimeter_minimum", "FLOAT",
+		"sim/flightmodel/misc/h_ind", "FLOAT", 
+		"sim/cockpit2/gauges/indicators/airspeed_kts_pilot", "FLOAT",
+		"sim/aircraft/view/acf_Vne", "FLOAT",
+		"sim/aircraft/view/acf_Vno", "FLOAT", 
+		"sim/cockpit/autopilot/altitude", "FLOAT", 
+	new_altitude)
 					  
 --fsx_variable_subscribe("INDICATED ALTITUDE", "Feet", new_altitude)
 
-xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/airspeed_kts_pilot", "FLOAT", new_speed)
+xpl_dataref_subscribe(
+		"sim/cockpit2/gauges/indicators/airspeed_kts_pilot", "FLOAT", 
+	new_speed)
+	
 --fsx_variable_subscribe("AIRSPEED INDICATED", "Knots", new_speed)
 
-xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/airspeed_acceleration_kts_sec_pilot", "FLOAT", new_airspeed_acceleration)
+xpl_dataref_subscribe(
+		"sim/cockpit2/gauges/indicators/airspeed_acceleration_kts_sec_pilot", "FLOAT", 
+	new_airspeed_acceleration)
 
 --xpl_dataref_subscribe("sim/weather/temperature_ambient_c", "FLOAT", new_temperature)
 --fsx_variable_subscribe("AMBIENT TEMPERATURE", "Celsius", new_temperature)
 
-xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/slip_deg", "FLOAT", new_slip_deg)
+xpl_dataref_subscribe(
+		"sim/cockpit2/gauges/indicators/slip_deg", "FLOAT", 
+	new_slip_deg)
 
 ------------------------------------------------------------------------------------------
 -- HSI
