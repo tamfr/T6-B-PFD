@@ -234,6 +234,8 @@ function new_feet_bug(altitude, feet)
     img_move(ft_indicator_bug_id, nil, ( (altitude - feet) * 0.85) + 179, nil, nil)
 end
 
+-- VSI
+
 function new_vsi(vspeed)
 
     vspeed = var_round(vspeed,0)
@@ -275,9 +277,9 @@ function new_pressure(pressure)
     txt_set(baro_set_txt_id, string.format("%02d.%02d IN", math.floor(pressure), (pressure % 1) * 100 ) )
 end
 
-function new_temperature(temperature)
-	txt_set(oat_text_id, string.format("%d\° C", temperature))
-end
+-- function new_temperature(temperature)
+-- 	txt_set(oat_text_id, string.format("%d\° C", temperature))
+-- end
 
 function new_min_ft_bug(feet)
 	txt_set(ft_indicator_text_id, var_round(feet,0) .. " FT")
@@ -340,6 +342,7 @@ end
 
 -- AOA
 
+aoa_box_txt = txt_add("AOA", "-fx-font-size:15px; -fx-font-family:ariel; -fx-fill:white; -fx-text-alignment:right", 10, 343, 40,20)
 aoa_txt = txt_add("???", "-fx-font-size:16px; -fx-font-family:ariel; -fx-fill:white; -fx-text-alignment:right", 10, 356, 40,20)
 
 function new_aoa(aoa)
@@ -401,8 +404,6 @@ end
 
 wind_speed_txt = txt_add("???", "-fx-font-size:16px; -fx-font-family:ariel; -fx-fill:white; -fx-text-alignment:center", 150, 444, 80,20)
 
-
-
 wind_arrow_id = img_add("windarrow.png", 150, 450, 20, 10)
 
 function new_winds(wind_direction, wind_speed, heading)
@@ -433,9 +434,12 @@ xpl_dataref_subscribe("sim/cockpit/autopilot/altitude", "FLOAT", new_min_ft_bug)
 --fsx_variable_subscribe("AUTOPILOT ALTITUDE LOCK VAR", "Feet", new_min_ft_bug)
 
 xpl_dataref_subscribe("sim/cockpit/radios/nav1_hdef_dot", "FLOAT", new_ils_hor_ft) -- Goede dataref vinden!
-xpl_dataref_subscribe("sim/cockpit/radios/nav1_hdef_dot", "FLOAT", new_ils_ver_ft) -- Goede dataref vinden!
 
-xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/vvi_fpm_pilot", "FLOAT", new_vsi)
+
+xpl_dataref_subscribe(
+		"sim/cockpit2/gauges/indicators/vvi_fpm_pilot", "FLOAT", -- [ft/min]
+	new_vsi)
+	
 --fsx_variable_subscribe("VERTICAL SPEED", "Feet per minute", new_vsi)
 
 xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/radio_altimeter_height_ft_pilot", "FLOAT",
@@ -453,7 +457,7 @@ xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/airspeed_kts_pilot", "FLOA
 
 xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/airspeed_acceleration_kts_sec_pilot", "FLOAT", new_airspeed_acceleration)
 
-xpl_dataref_subscribe("sim/weather/temperature_ambient_c", "FLOAT", new_temperature)
+--xpl_dataref_subscribe("sim/weather/temperature_ambient_c", "FLOAT", new_temperature)
 --fsx_variable_subscribe("AMBIENT TEMPERATURE", "Celsius", new_temperature)
 
 xpl_dataref_subscribe("sim/cockpit2/gauges/indicators/slip_deg", "FLOAT", new_slip_deg)
