@@ -385,8 +385,10 @@ function new_rotation(rotation, rotation_bug, bearing_one_relative, obs, to_from
 	img_rotate(cdi_id, obs - rotation)
 
 	if to_from > 1 then
+		visible(cdi_from_arrow_id, true)
 		img_rotate(cdi_from_arrow_id, obs - rotation)
 	elseif to_from > 0 then 
+		visible(cdi_from_arrow_id, true)
 		img_rotate(cdi_from_arrow_id, obs - rotation + 180)
 	else
 		visible(cdi_from_arrow_id, false)
