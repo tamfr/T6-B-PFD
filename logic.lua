@@ -149,8 +149,8 @@ compass_txt_id = txt_add("???", "-fx-font-size:17px; -fx-font-family:ariel; -fx-
 -- NAV
 
 bearing1_id = txt_add("VOR", "-fx-font-size:16px; -fx-font-family:ariel; -fx-fill:#74e72c; -fx-font-weight:bold; -fx-text-alignment:left", 60, 620, 60,20)
-bearing1_freq_txt_id = txt_add("???.??", "-fx-font-size:16px; -fx-font-family:ariel; -fx-fill:#74e72c; -fx-font-weight:bold; -fx-text-alignment:left", 40, 640, 60,20)
-bearing1_dist_txt_id = txt_add("??.?", "-fx-font-size:16px; -fx-font-family:ariel; -fx-fill:#74e72c; -fx-font-weight:bold; -fx-text-alignment:left", 40, 660, 80,20)
+bearing1_freq_txt_id = txt_add("???.??", "-fx-font-size:14px; -fx-font-family:ariel; -fx-fill:#74e72c; -fx-font-weight:bold; -fx-text-alignment:left", 40, 640, 60,20)
+bearing1_dist_txt_id = txt_add("??.?", "-fx-font-size:14px; -fx-font-family:ariel; -fx-fill:#74e72c; -fx-font-weight:bold; -fx-text-alignment:left", 40, 654, 80,20)
 
 nav_txt_id = txt_add("???.??", "-fx-font-size:17px; -fx-font-family:ariel; -fx-fill:white; -fx-font-weight:bold; -fx-text-alignment:center", 20, 520, 60,40)
 --aux_txt_id = txt_add("NAV-1", "-fx-font-size:17px; -fx-font-family:ariel; -fx-fill:#3c99de; -fx-font-weight:bold; -fx-text-alignment:center", 34, 580, 60,40)
@@ -377,13 +377,15 @@ end
 
 
 hdg_bug_txt_id = txt_add("???", "-fx-font-size:17px; -fx-font-family:ariel; -fx-fill:#e72ccd; -fx-font-weight:bold; -fx-text-alignment:center", 450, 700, 40,40)
+crs_txt_id = txt_add("CRS", "-fx-font-size:17px; -fx-font-family:ariel; -fx-fill:white; -fx-font-weight:bold; -fx-text-alignment:center", 80, 680, 40,40)
+crs_txt_id = txt_add("???", "-fx-font-size:17px; -fx-font-family:ariel; -fx-fill:white; -fx-font-weight:bold; -fx-text-alignment:center", 80, 700, 40,40)
 
 function new_rotation(rotation, rotation_bug, bearing_one_relative, obs, to_from, nav1hdef)
 	running_txt_move_carot(compass_inner_txt_id, (rotation / 30) + 6)
 	img_rotate(compass_id,rotation * -1)
 	img_rotate(bearing_pointer_one_id,bearing_one_relative)
 	img_rotate(cdi_id, obs - rotation)
-
+	
 	if to_from > 1 then
 		visible(cdi_from_arrow_id, true)
 		img_rotate(cdi_from_arrow_id, obs - rotation)
@@ -413,6 +415,7 @@ function new_rotation(rotation, rotation_bug, bearing_one_relative, obs, to_from
 	img_rotate(cdi_deviation_indicator_id, obs-rotation)
 	img_move(cdi_deviation_indicator_id, dh + 279, dv + 554, nil, nil)
     
+   txt_set(crs_txt_id, string.format("%03d", obs))
 end
 
 
