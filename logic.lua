@@ -98,15 +98,15 @@ ils_bug_hor_id = img_add("ILSbug.png", 270,390, 20, 20)
 ils_bug_ver_id = img_add("ILSbug.png", 420,300, 20, 20)
 
 -- Beams
-beam_left_top_id    = img_add("percentagebeam.png", 253,127, 14, 31)
-beam_left_bottom_id = img_add("percentagebeam.png", 253,231, 14, 31)
-beam_right_top_id    = img_add("percentagebeam.png", 724,149, 14, 31)
-beam_right_bottom_id = img_add("percentagebeam.png", 724,210, 14, 31)
-
-img_viewport_rect(beam_left_top_id    , 253,127, 14, 30)
-img_viewport_rect(beam_left_bottom_id , 253,232, 14, 30)
-img_viewport_rect(beam_right_top_id   , 724,149, 14, 30)
-img_viewport_rect(beam_right_bottom_id, 724,211, 14, 30)
+--beam_left_top_id    = img_add("percentagebeam.png", 253,127, 14, 31)
+--beam_left_bottom_id = img_add("percentagebeam.png", 253,231, 14, 31)
+--beam_right_top_id    = img_add("percentagebeam.png", 724,149, 14, 31)
+--beam_right_bottom_id = img_add("percentagebeam.png", 724,210, 14, 31)
+--
+--img_viewport_rect(beam_left_top_id    , 253,127, 14, 30)
+--img_viewport_rect(beam_left_bottom_id , 253,232, 14, 30)
+--img_viewport_rect(beam_right_top_id   , 724,149, 14, 30)
+--img_viewport_rect(beam_right_bottom_id, 724,211, 14, 30)
 
 compass_id = img_add("compass.png", 146,450,268,268)
 
@@ -297,34 +297,33 @@ function new_min_ft_bug(feet)
 	txt_set(alt_bug_txt_id, string.format("%04d",var_round(feet,0)))
 end
 
-function new_ils_hor_ft(dots)
-	img_move(ils_bug_hor_id,270+dots,nil,nil,nil)
+-- ILS
+
+function new_ils(horizontal_deflection, vertical_deflection)
+	img_move(ils_bug_hor_id, 270+horizontal_deflection*33, nil, nil, nil)
+	img_move(ils_bug_ver_id, nil, 200-vertical_deflection*33, nil, nil)
 end
 
-function new_ils_ver_ft(dots)
-	img_move(ils_bug_ver_id,nil,200-dots,nil,nil)
-end
-
-function new_airspeed_acceleration(acceleration)
-
-    acceleration = var_cap(acceleration, -30, 30)
-
-	img_visible(beam_left_top_id   , (acceleration > 0) )
-	img_visible(beam_left_bottom_id, (acceleration < 0) )
-
-	img_move(beam_left_top_id   , nil, 126 + (31-acceleration),           nil, nil)
-	img_move(beam_left_bottom_id, nil, 232 - (31-math.abs(acceleration)), nil, nil)
-end
-
-function new_altitude_acceleration(acceleration)
-
-    -- TODO disabled for now untill we find the right dataref
-	img_visible(beam_right_top_id   , false) --(acceleration > 0) )
-	img_visible(beam_right_bottom_id, false) --(acceleration < 0) )
-
-	img_move(beam_right_top_id   , nil, 148 + (31-acceleration),           nil, nil)
-	img_move(beam_right_bottom_id, nil, 211 - (31-math.abs(acceleration)), nil, nil)
-end
+--function new_airspeed_acceleration(acceleration)
+--
+--   acceleration = var_cap(acceleration, -30, 30)
+--
+--img_visible(beam_left_top_id   , (acceleration > 0) )
+--img_visible(beam_left_bottom_id, (acceleration < 0) )
+--
+--img_move(beam_left_top_id   , nil, 126 + (31-acceleration),           nil, nil)
+--img_move(beam_left_bottom_id, nil, 232 - (31-math.abs(acceleration)), nil, nil)
+--end
+--
+--function new_altitude_acceleration(acceleration)
+--
+--   -- TODO disabled for now untill we find the right dataref
+--img_visible(beam_right_top_id   , false) --(acceleration > 0) )
+--img_visible(beam_right_bottom_id, false) --(acceleration < 0) )
+--
+--img_move(beam_right_top_id   , nil, 148 + (31-acceleration),           nil, nil)
+--img_move(beam_right_bottom_id, nil, 211 - (31-math.abs(acceleration)), nil, nil)
+--end
 
 --function new_vsi_bug(vspeed)
 --
@@ -484,8 +483,9 @@ xpl_dataref_subscribe(
 --fsx_variable_subscribe("AUTOPILOT ALTITUDE LOCK VAR", "Feet", new_min_ft_bug)
 
 xpl_dataref_subscribe(
-		"sim/cockpit/radios/nav1_hdef_dot", "FLOAT", 
-	new_ils_hor_ft) -- Goede dataref vinden!
+		"sim/cockpit/radios/nav1_hdef_dot", "FLOAT",
+		"sim/cockpit/radios/nav1_vdef_dot", "FLOAT",
+	new_ils)
 
 xpl_dataref_subscribe(
 		"sim/cockpit2/gauges/indicators/vvi_fpm_pilot", "FLOAT", -- [ft/min]
@@ -511,9 +511,9 @@ xpl_dataref_subscribe(
 	
 --fsx_variable_subscribe("AIRSPEED INDICATED", "Knots", new_speed)
 
-xpl_dataref_subscribe(
-		"sim/cockpit2/gauges/indicators/airspeed_acceleration_kts_sec_pilot", "FLOAT", 
-	new_airspeed_acceleration)
+--xpl_dataref_subscribe(
+--		"sim/cockpit2/gauges/indicators/airspeed_acceleration_kts_sec_pilot", "FLOAT", 
+--	new_airspeed_acceleration)
 
 --xpl_dataref_subscribe("sim/weather/temperature_ambient_c", "FLOAT", new_temperature)
 --fsx_variable_subscribe("AMBIENT TEMPERATURE", "Celsius", new_temperature)
@@ -538,6 +538,7 @@ xpl_dataref_subscribe(
 		"sim/cockpit2/radios/actuators/hsi_obs_deg_mag_pilot", "FLOAT", -- [deg]
 		"sim/cockpit2/radios/indicators/nav1_flag_from_to_pilot", "INT", -- 0, 1:to, 2:from 
 		"sim/cockpit/radios/nav1_hdef_dot", "FLOAT",
+		--"sim/cockpit2/radios/indicators/nav1_hdef_dots_pilot", "FLOAT",
 	new_rotation)
 
 --fsx_variable_subscribe("PLANE HEADING DEGREES GYRO", "Degrees", new_rotation)
@@ -590,8 +591,8 @@ new_altitude(0)
 new_min_ft_bug(0)
 new_pressure(0)
 new_temperature(12)
-new_airspeed_acceleration(10)
-new_altitude_acceleration(10)
+--new_airspeed_acceleration(10)
+--new_altitude_acceleration(10)
 new_indicated_pitch(0)
 new_indicated_roll(0)
 ]]
